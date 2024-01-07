@@ -7,7 +7,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Set NLTK data path
-nltk.data.path.append("/path/to/nltk_data")
+nltk.data.path.append("punkt")
 
 # Sample study plans (you can replace this with real data)
 study_plans = {
@@ -39,9 +39,12 @@ def index():
         else:
             flashcard_answer = None
 
+        # Mood tracking
+        mood_level = request.form.get('mood_level', '')
         response = f"Your question tokens: {', '.join(tokens)}\n"
         response += f"Suggested study plan difficulty: {study_difficulty}\n"
-        response += f"Flashcard quiz answer: {flashcard_answer}"
+        response += f"Flashcard quiz answer: {flashcard_answer}\n"
+        response += f"Your mood level: {mood_level}"
         return render_template('index.html', response=response)
     return render_template('index.html')
 

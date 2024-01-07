@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import nltk
 from sklearn.linear_model import LogisticRegression
-import cv2 # pip install opencv-python
+import cv2
 import numpy as np
 
 app = Flask(__name__)

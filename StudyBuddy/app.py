@@ -1,67 +1,34 @@
-from flask import Flask, render_template, request
-import nltk
-from sklearn.linear_model import LogisticRegression
-import cv2
-import numpy as np
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
+app.secret_key = 'hidden'  # Change this to a secure key in production
 
-# Set NLTK data path
-nltk.data.path.append("punkt")
-
-# Sample study plans (you can replace this with real data)
-study_plans = {
-    'easy': {'subject': 'Math', 'content': 'Basic arithmetic'},
-    'medium': {'subject': 'Science', 'content': 'Introduction to physics'},
-    'hard': {'subject': 'History', 'content': 'World War II events'}
-}
-
-# Sample flashcard quiz (you can replace this with real data)
-flashcard_answers = {
-    'apple': 'A fruit',
-    'python': 'A programming language',
-    'sun': 'A star'
-}
+# Sample data
+subjects = ["Introduction into AI"]
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def welcome():
     if request.method == 'POST':
-        question = request.form['question']
-        tokens = nltk.word_tokenize(question)
+        student_name = request.form['student_name']
+        session['student_name'] = student_name
+        return render_template('home.html', subjects = subjects)
+    return render_template('welcome.html')
 
-        # Basic machine learning for study plan recommendation
-        study_difficulty = predict_study_difficulty(tokens)
+@app.route('/home', methods=['GET'])
+def home():
+    student_name = session.get('student_name', 'Guest')
+    saved_subjects = session.get('saved_subjects', [])
+    return render_template('home.html', student_name=student_name, saved_subjects=saved_subjects)
 
-        # Basic computer vision for flashcard quiz
-        if 'picture' in request.files:
-            flashcard_image = request.files['picture']
-            flashcard_answer = recognize_flashcard(flashcard_image)
-        else:
-            flashcard_answer = None
-
-        # Mood tracking
-        mood_level = request.form.get('mood_level', '')
-        response = f"Your question tokens: {', '.join(tokens)}\n"
-        response += f"Suggested study plan difficulty: {study_difficulty}\n"
-        response += f"Flashcard quiz answer: {flashcard_answer}\n"
-        response += f"Your mood level: {mood_level}"
-        return render_template('index.html', response=response)
-    return render_template('index.html')
-
-def predict_study_difficulty(tokens):
-    # This is a simple example; in real-world scenarios, you'd use more sophisticated models and data
-    model = LogisticRegression()
-    X = [[len(tokens)]]  # Features: length of tokens
-    y = ['easy']  # Labels: study difficulty level
-    model.fit(X, y)
-    return model.predict([[len(tokens)]])
-
-def recognize_flashcard(flashcard_image):
-    # Basic example: use OpenCV for image processing and recognition
-    img = cv2.imdecode(np.frombuffer(flashcard_image.read(), np.uint8), cv2.IMREAD_COLOR)
-    # You would implement a more sophisticated recognition algorithm
-    # This is just a placeholder
-    return "Placeholder Answer"
+@app.route('/add_subject', methods=['GET', 'POST'])
+def add_subject():
+    if request.method == 'POST':
+        subject_name = request.form['subject_name']
+        saved_subjects = session.get('saved_subjects', [])
+        saved_subjects.append(subject_name)
+        session['saved_subjects'] = saved_subjects
+        return redirect(url_for('home'))
+    return render_template('add_subject.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

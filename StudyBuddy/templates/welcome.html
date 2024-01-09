@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to StudyBuddy</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>Welcome to StudyBuddy</h1>
+            <p class="lead">Your AI study companion</p>
+            <form method="POST" action="/home">
+                <div class="form-group">
+                    <label for="student_name">Enter your name:</label>
+                    <input type="text" class="form-control" id="student_name" name="student_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Let's go</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

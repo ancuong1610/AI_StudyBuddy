@@ -3,19 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy - {{ subject_name }}</title>
+    <title>{{ subject_name }} - StudyBuddy</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('./backgrnd.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome, {{ name }}!</h1>
-    <h2>{{ subject_name }} Content:</h2>
-    <!-- Display content specific to the subject here -->
+    <div class="container mt-3">
+        <h1>{{ subject_name }}</h1>
 
-    <form action="{{ url_for('upload_pdf', subject_name=subject_name) }}" method="post" enctype="multipart/form-data">
-        <label for="pdf_file">Upload PDF:</label>
-        <input type="file" name="pdf_file" accept=".pdf" required>
-        <button type="submit">Upload</button>
-    </form>
+        <!-- Upload PDF Button -->
+        <form method="POST" action="/upload_pdf" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="pdf_file">Upload PDF:</label>
+                <input type="file" class="form-control-file" id="pdf_file" name="pdf_file" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload PDF</button>
+        </form>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+        <!-- Summarize Button -->
+        <button id="summarizeBtn" class="btn btn-success mt-3">Summarize</button>
+
+        <!-- Summarization Window -->
+        <div id="summarizeWindow" class="hidden">
+            <!-- Summarization Content Goes Here -->
+            <p>Summarized Content Will Be Displayed Here</p>
+        </div>
+
+        <!-- Flashcard Button -->
+        <button id="flashcardBtn" class="btn btn-info mt-3">Flashcards</button>
+
+        <!-- Flashcard Window -->
+        <div id="flashcardWindow" class="hidden">
+            <!-- Flashcard Content Goes Here -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Flashcard Question 1</h5>
+                    <p class="card-text">Question Content...</p>
+                    <button class="btn btn-primary">Show Answer</button>
+                </div>
+            </div>
+            <!-- Repeat for other flashcards -->
+        </div>
+    </div>
+
+    <script>
+        // Show/Hide Summarization Window
+        document.getElementById('summarizeBtn').addEventListener('click', function() {
+            document.getElementById('summarizeWindow').classList.toggle('hidden');
+            // Fetch the summarized content from the server
+            fetch('/upload_pdf', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('summarizedContent').innerText = data.summary;
+                });
+        });
+
+        // Show/Hide Flashcard Window
+        document.getElementById('flashcardBtn').addEventListener('click', function() {
+            document.getElementById('flashcardWindow').classList.toggle('hidden');
+            // Fetch the summarized content and generated questions from the server
+            fetch('/upload_pdf', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the generated questions in the flashcard window
+                    const flashcardWindow = document.getElementById('flashcardWindow');
+                    flashcardWindow.innerHTML = '';
+                    data.questions.forEach((question, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'card mt-3';
+                        card.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">Flashcard Question ${index + 1}</h5>
+                                <p class="card-text">${question}</p>
+                                <button class="btn btn-primary">Show Answer</button>
+                            </div>
+                        `;
+                        flashcardWindow.appendChild(card);
+                    });
+                });
+        });
+
+    </script>
 </body>
 </html>

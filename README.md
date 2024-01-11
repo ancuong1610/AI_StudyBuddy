@@ -3,8 +3,8 @@ A study companion app for students that leverages basic AI functionalities to en
 # Setup(MacOS version)
 1. Download all necessary Packages:
 After cloning the project, run
-+ pip install -r requirements.txt in Pycharm terminal.
-+ pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu in Terminal
++ pip install -r requirements.txt (in Pycharm terminal).
++ pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu (in Terminal).
 3. Run the App:
 In PyCharm, right-click on app.py and select "Run 'app'."
 4. Open Your Browser:
